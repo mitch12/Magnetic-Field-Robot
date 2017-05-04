@@ -1,0 +1,123 @@
+
+Memory Configuration
+
+Name             Origin             Length             Attributes
+flash            0x08000000         0x00010000
+ram              0x20000000         0x00002000
+*default*        0x00000000         0xffffffff
+
+Linker script and memory map
+
+LOAD startup.o
+LOAD main.o
+                0x08000000                . = ORIGIN (flash)
+
+.text           0x08000000      0x450
+ .text          0x08000000       0xc8 startup.o
+                0x08000000                Vector_Table
+                0x08000004                ResetVector
+                0x080000c0                Reset_Handler
+                0x080000c6                Default_Handler
+ .text          0x080000c8      0x388 main.o
+                0x080000c8                delay
+                0x080000e4                stop
+                0x08000100                go
+                0x0800011c                reverse
+                0x08000164                turnleft
+                0x080001ac                turnright
+                0x080001f4                turnaround
+                0x0800023c                Timer1ISR
+                0x08000320                SysInit
+                0x08000400                ToggleLED
+                0x0800041c                main
+
+.glue_7         0x08000450        0x0
+ .glue_7        0x08000450        0x0 linker stubs
+
+.glue_7t        0x08000450        0x0
+ .glue_7t       0x08000450        0x0 linker stubs
+
+.vfp11_veneer   0x08000450        0x0
+ .vfp11_veneer  0x08000450        0x0 linker stubs
+
+.v4_bx          0x08000450        0x0
+ .v4_bx         0x08000450        0x0 linker stubs
+
+.iplt           0x08000450        0x0
+ .iplt          0x08000450        0x0 startup.o
+
+.rel.dyn        0x08000450        0x0
+ .rel.iplt      0x08000450        0x0 startup.o
+                0x20000000                . = ORIGIN (ram)
+
+.data           0x20000000        0x0
+ .data          0x20000000        0x0 startup.o
+ .data          0x20000000        0x0 main.o
+OUTPUT(main.elf elf32-littlearm)
+
+.igot.plt       0x20000000        0x0
+ .igot.plt      0x20000000        0x0 startup.o
+
+.bss            0x20000000        0x8
+ .bss           0x20000000        0x0 startup.o
+ .bss           0x20000000        0x8 main.o
+                0x20000000                Count
+                0x20000004                delay_time
+
+.ARM.attributes
+                0x00000000       0x2d
+ .ARM.attributes
+                0x00000000       0x21 startup.o
+ .ARM.attributes
+                0x00000021       0x31 main.o
+
+.comment        0x00000000       0x7f
+ .comment       0x00000000       0x7f main.o
+                                 0x80 (size before relaxing)
+
+.debug_line     0x00000000       0xd9
+ .debug_line    0x00000000       0x3c startup.o
+ .debug_line    0x0000003c       0x9d main.o
+
+.debug_info     0x00000000      0x183
+ .debug_info    0x00000000       0x62 startup.o
+ .debug_info    0x00000062      0x121 main.o
+
+.debug_abbrev   0x00000000       0xd4
+ .debug_abbrev  0x00000000       0x14 startup.o
+ .debug_abbrev  0x00000014       0xc0 main.o
+
+.debug_aranges  0x00000000       0x40
+ .debug_aranges
+                0x00000000       0x20 startup.o
+ .debug_aranges
+                0x00000020       0x20 main.o
+
+.debug_str      0x00000000       0xfd
+ .debug_str     0x00000000       0xfd main.o
+
+.debug_frame    0x00000000      0x148
+ .debug_frame   0x00000000      0x148 main.o
+
+Cross Reference Table
+
+Symbol                                            File
+Count                                             main.o
+Default_Handler                                   startup.o
+ResetVector                                       startup.o
+Reset_Handler                                     startup.o
+SysInit                                           main.o
+Timer1ISR                                         main.o
+                                                  startup.o
+ToggleLED                                         main.o
+Vector_Table                                      startup.o
+delay                                             main.o
+delay_time                                        main.o
+go                                                main.o
+main                                              main.o
+                                                  startup.o
+reverse                                           main.o
+stop                                              main.o
+turnaround                                        main.o
+turnleft                                          main.o
+turnright                                         main.o

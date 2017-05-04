@@ -1,0 +1,113 @@
+ARM GAS  startup.s 			page 1
+
+
+ GNU assembler version 2.27.90 (arm-none-eabi)
+	 using BFD version (GNU Tools for ARM Embedded Processors 6-2017-q1-update) 2.27.90.20170215.
+ options passed	: -mcpu=cortex-m0 -mthumb -g -asghl=startup.lst 
+ input file    	: startup.s
+ output file   	: startup.o
+ target        	: arm-none-eabi
+ time stamp    	: 
+
+ARM GAS  startup.s 			page 2
+
+
+   1              	
+   2              			.thumb /*Cortex micros only understand thumb(2) code	*/
+   3              			.global Vector_Table, ResetVector	
+   4              	/* Set up interrupt vector table */
+   5              			.text
+   6              	Vector_Table:    
+   7 0000 00200020 			.word     0x20002000          /* Top of Stack */
+   8              	/* The interrupt vectors that follow are manually forced to be aligned along
+   9              	   odd addresses.  The reason for this is that the address for a Thumb instruction
+  10              	   must always have its LSB set to 1.  This does not mean that the instruction 
+  11              	   is stored at an odd number address.  The LSB is used as a flag to indicate
+  12              	   that an ARM (LSB=0) or a Thumb (LSB=1) instruction is being addressed. */
+  13 0004 01000000 	ResetVector:    .word     Reset_Handler+1     /* Reset Handler */
+  14 0008 01000000 	                .word     Default_Handler+1   /* NMI */
+  15 000c 01000000 	                .word     Default_Handler+1   /* Hard Fault */
+  16 0010 00000000 	                .word     0                   /* Reserved */
+  17 0014 00000000 	                .word     0                   /* Reserved */
+  18 0018 00000000 	                .word     0                   /* Reserved */
+  19 001c 00000000 	                .word     0                   /* Reserved */
+  20 0020 00000000 	                .word     0                   /* Reserved */
+  21 0024 00000000 	                .word     0                   /* Reserved */
+  22 0028 00000000 	                .word     0                   /* Reserved */
+  23 002c 01000000 	                .word     Default_Handler+1   /* SVC */
+  24 0030 00000000 	                .word     0                   /* Reserved */
+  25 0034 00000000 	                .word     0                   /* Reserved */
+  26 0038 01000000 	                .word     Default_Handler+1   /* PendSV */
+  27 003c 01000000 	                .word     Default_Handler+1   /* SysTick */
+  28              			
+  29              	/* External interrupt handlers follow */
+  30 0040 01000000 			.word	  Default_Handler + 1 /* WWDG */
+  31 0044 01000000 			.word	  Default_Handler + 1 /* PVD */
+  32 0048 01000000 			.word	  Default_Handler + 1 /* RTC */
+  33 004c 01000000 			.word	  Default_Handler + 1 /* FLASH */
+  34 0050 01000000 	 		.word	  Default_Handler + 1 /* RCC */
+  35 0054 01000000 			.word	  Default_Handler + 1 /* EXTI0_1 */
+  36 0058 01000000 			.word	  Default_Handler + 1 /* EXTI2_3 */
+  37 005c 01000000 			.word	  Default_Handler + 1 /* EXTI4_15 */
+  38 0060 01000000 			.word	  Default_Handler + 1 /* TSC */
+  39 0064 01000000 			.word	  Default_Handler + 1 /* DMA_CH1 */
+  40 0068 01000000 			.word	  Default_Handler + 1 /* DMA_CH2_3 */
+  41 006c 01000000 			.word	  Default_Handler + 1 /* DMA_CH4_5 */
+  42 0070 01000000 			.word	  Default_Handler + 1 /* ADC_COMP */
+  43              		.extern	Timer1ISR
+  44 0074 00000000 			.word	  Timer1ISR /* TIM1_BRK_UP_TRG_COM */
+  45 0078 01000000 			.word	  Default_Handler + 1 /* TIM1_CC */
+  46 007c 01000000 			.word	  Default_Handler + 1 /* TIM2 */
+  47 0080 01000000 			.word	  Default_Handler + 1 /* TIM3 */
+  48 0084 01000000 			.word	  Default_Handler + 1 /* TIM6_DAC */
+  49 0088 01000000 			.word	  Default_Handler + 1 /* RESERVED */
+  50 008c 01000000 			.word	  Default_Handler + 1 /* TIM14 */
+  51 0090 01000000 			.word	  Default_Handler + 1 /* TIM15 */
+  52 0094 01000000 	  		.word	  Default_Handler + 1 /* TIM16 */
+  53 0098 01000000 			.word	  Default_Handler + 1 /* TIM17 */
+  54 009c 01000000 			.word	  Default_Handler + 1 /* I2C1 */
+  55 00a0 01000000 			.word	  Default_Handler + 1 /* I2C2 */
+  56 00a4 01000000 			.word	  Default_Handler + 1 /* SPI1 */
+  57 00a8 01000000 			.word	  Default_Handler + 1 /* SPI2 */
+ARM GAS  startup.s 			page 3
+
+
+  58 00ac 01000000 			.word	  Default_Handler + 1 /* USART1 */
+  59 00b0 01000000 			.word	  Default_Handler + 1 /* USART2 */
+  60 00b4 01000000 			.word	  Default_Handler + 1 /* RESERVED */
+  61 00b8 01000000 			.word	  Default_Handler + 1 /* CEC */
+  62 00bc 01000000 	 		.word	  Default_Handler + 1 /* RESERVED */
+  63              	
+  64              	
+  65              	
+  66              	/* Reset handler */
+  67              			.thumb
+  68              	Reset_Handler:
+  69              		.global Reset_Handler, Default_Handler
+  70              	    .extern  main
+  71              	/* Stack pointer is already set to the value at entry 0 in the interrupt vector table  */
+  72              	/* Clock speed is set by default to the internal factory calibrated 8MHz RC oscillator */
+  73              	/* The PLL is configured to run at twice the RC clock speed so the default system      */
+  74              	/* operating speed is 16MHz							       */
+  75              	/* All that is left to do is to call main					       */
+  76 00c0 FFF7FEFF 			bl	main
+  77 00c4 FEE7     			b	.	/* If main returns enter a loop */
+  78              	Default_Handler:
+  79 00c6 FEE7     			b       .	/* Default handler just enters a loop.  Note the dot */
+  80              	
+  81              	
+  82              	
+ARM GAS  startup.s 			page 4
+
+
+DEFINED SYMBOLS
+           startup.s:6      .text:00000000 Vector_Table
+           startup.s:13     .text:00000004 ResetVector
+           startup.s:68     .text:000000c0 Reset_Handler
+           startup.s:78     .text:000000c6 Default_Handler
+                            .text:00000000 $d
+           startup.s:76     .text:000000c0 $t
+
+UNDEFINED SYMBOLS
+Timer1ISR
+main
